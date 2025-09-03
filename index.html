@@ -4,8 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notes Manager</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-database"></i> Notes Manager</h1>
+        </header>
+
+        <div class="app-container">
+            <div class="notes-manager">
+                <h2>Your Personal Notes</h2>
+                <p>Manage your notes - each one is a document</p>
+
+                <form action="" class="notes-form" id="noteForm">
+                    <input type="text" id="noteTitle" placeholder="Note Title" required>
+                    <textarea id="noteContent" placeholder="Note Content" required></textarea>
+                    <div class="form-row">
+                        <select id="noteCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="personal">Personal</option>
+                            <option value="work">Work</option>
+                            <option value="ideas">Ideas</option>
+                            <option value="tasks">Tasks</option>
+                        </select>
+                        <input type="color" id="noteColor" value="#6c5ce7">
+                    </div>
+                    <button id="submit"><i class="fas fa-plus"></i> Add Note</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>

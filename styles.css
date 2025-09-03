@@ -1,0 +1,112 @@
+:root{
+    --primary: #6c5ce7;
+    --primary-light: #a29bfe;
+    --secondary: #fd79a8;
+    --dark: #2d3436;
+    --light: #f5f6fa;
+    --success: #00b894;
+    --warning: #f6cb6e;
+    --danger: #d63031;
+    --transition: all 0.3s ease;
+    --radius: 10px;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body{
+    background: linear-gradient(to right, #8e2de2, #4a00e0);
+    color: var(--dark);
+    min-height: 100vh;
+    padding: 25px;
+}
+
+.container{
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header{
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+    gap: 5px;
+}
+
+header h1{
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    text-shadow: var(--shadow);
+}
+
+.app-container{
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+    align-items: center;
+    justify-content: center;
+}
+
+.notes-manager{
+    min-width: 600px;
+    background: white;
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+}
+
+.notes-form{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: var(--light);
+    border-radius: var(--radius);
+    margin-top: 20px;
+}
+
+.notes-form input, .notes-form textarea, .notes-form select{
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: var(--radius);
+    font-size: 1rem;
+}
+
+.notes-form textarea{
+    min-height: 100px;
+    /* resize automatically */
+    resize: vertical;  
+}
+
+.form-row{
+    display: flex;
+    gap: 15px;
+}
+
+.form-row > * {
+    flex: 1;
+}
+
+.notes-form button{
+    padding: 12px 20px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: bold;
+}
+
+.notes-form button:hover{
+    background: var(--primary-light);
+    transform: translateY(2px);
+}
