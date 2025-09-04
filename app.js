@@ -1,7 +1,8 @@
+
 function initApp(){
     //check if notes exist in localstorage, if not initialize empty array
     if(!localStorage.getItem('notes')){
-        localStorage.setItem('notes', JSON.stringify()); //converting object to json
+        localStorage.setItem('notes', JSON.stringify([])); //converting object to json
     }
 }
 
@@ -15,7 +16,7 @@ function addNote(e){
 
     //create new note object
     const newNote = {
-        _id: Date.now().toString,
+        _id: Date.now().toString(),
         title: title,
         content: content,
         category: category,
@@ -95,12 +96,26 @@ function loadNotes(filter = 'all'){
             <div class="note-footer">
                 <div class="note-date">${noteDate}</div>
                 <div class="note-actions">
-                    <button><i class="fas fa-edit"></i></button>
-                    <button><i class="fas fa-trash"></i></button>
+                    <button onclick="editNote('${note._id}')"><i class="fas fa-edit"></i></button>
+                    <button onclick="deleteNote('${note._id}')"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
         `;
 
         notesList.appendChild(noteElement);
     })
+}
+
+function editNote(noteId){
+
+}
+
+function deleteNote(noteId){
+    if(confirm('Are you sure you want to delete this note?')){
+        const notes = JSON.parse(localStorage.getItem('notes'));
+
+        const updatedNotes = notes.filter(note => note._id !== noteId);
+        localStorage.setItem('notes', JSON.stringify(updatedNotes));
+        loadNotes();
+    }
 }
