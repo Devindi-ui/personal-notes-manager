@@ -52,7 +52,7 @@ header h1{
     justify-content: center;
 }
 
-.notes-manager{
+.notes-manager, .products-manager{
     min-width: 600px;
     background: white;
     border-radius: var(--radius);
@@ -62,7 +62,8 @@ header h1{
     flex-direction: column;
 }
 
-.notes-form{
+
+.notes-form, .products-form{
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -95,7 +96,7 @@ header h1{
     flex: 1;
 }
 
-.notes-form button{
+.notes-form button, .products-form button{
     padding: 12px 20px;
     background: var(--primary);
     color: white;
@@ -109,4 +110,47 @@ header h1{
 .notes-form button:hover{
     background: var(--primary-light);
     transform: translateY(2px);
+}
+
+.filters{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-btn{
+    padding: 10px 15px;
+    background: var(--light);
+    border: 1px solid #ddd;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.filter-btn.active{
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.notes-list{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.note-item{
+    background: rgb(249, 247, 247);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.5s;
+    border-left: 4px solid var(--primary);
 }
