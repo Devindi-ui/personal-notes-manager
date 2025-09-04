@@ -154,3 +154,81 @@ header h1{
     animation: fadeIn 0.5s;
     border-left: 4px solid var(--primary);
 }
+
+@keyframes fadeIn{
+    from{opacity: 0; transform: translateY(10px);}
+    to{opacity: 1; transform: translateY(0);}
+}
+
+.note-item:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.note-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.note-title{
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--dark);
+}
+
+.note-category{
+    padding: 5px 10px;
+    color: white;
+    background: var(--primary);
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+.note-content{
+    margin-bottom: 15px;
+    color: #555;
+    flex-grow: 1;
+}
+
+.note-footer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.note-date{
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.note-action{
+    display: flex;
+    gap: 10px;
+}
+
+.note-actions button{
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    transition: var(--transition);
+}
+
+.note-actions button:hover{
+    color: var(--primary);
+}
+
+.empty-state{
+    text-align: center;
+    padding: 40px;
+    color: #888;
+}
+
+.empty-state i{
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: var(--primary-light);
+}

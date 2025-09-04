@@ -94,7 +94,7 @@ function loadNotes(filter = 'all'){
             <div class="note-content">${note.content}</div>
             <div class="note-footer">
                 <div class="note-date">${noteDate}</div>
-                <div class="note-action">
+                <div class="note-actions">
                     <button><i class="fas fa-edit"></i></button>
                     <button><i class="fas fa-trash"></i></button>
                 </div>
