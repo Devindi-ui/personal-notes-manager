@@ -54,6 +54,9 @@ document.addEventListener('DOMContentLoaded', function(){
 
     //event listners
     document.getElementById('noteForm').addEventListener('submit', addNote);
+    this.documentElement.getElementsByClassName('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', filterNotes);
+    })
 
     loadNotes();
 });
@@ -107,7 +110,20 @@ function loadNotes(filter = 'all'){
 }
 
 function editNote(noteId){
+    const notes = JSON.parse(localStorage.getItem('notes'));
 
+    const noteToEdit = notes.find(note => note._id === noteId);
+
+    if(noteToEdit){
+        document.getElementById('noteTitle').value = noteToEdit.title;
+        document.getElementById('noteContent').value = noteToEdit.content;
+        document.getElementById('noteCategory').value = noteToEdit.category;
+        document.getElementById('noteColor').value = noteToEdit.color;
+        
+        //remove the note from the array, then save updated version
+        const updatedNotes = notes.filter(note => note._id !== noteId);
+        localStorage.setItem('notes', JSON.stringify(updatedNotes));
+    }
 }
 
 function deleteNote(noteId){
@@ -118,4 +134,15 @@ function deleteNote(noteId){
         localStorage.setItem('notes', JSON.stringify(updatedNotes));
         loadNotes();
     }
+}
+
+function filterNotes(){
+    //update active button
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.add('active');
+    });
+    this.classList.add('active');
+
+    const filter = this.getAttribute('data-filter');
+    loadNotes(filter);
 }
