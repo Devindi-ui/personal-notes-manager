@@ -1,5 +1,13 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  deleteDoc,
+  updateDoc,
+} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCNSyFbJf5cFzVAfvLRCgoqqxzDmxv0eXs",
@@ -8,90 +16,96 @@ const firebaseConfig = {
   storageBucket: "notesapp-5fc7a.firebasestorage.app",
   messagingSenderId: "116587544575",
   appId: "1:116587544575:web:97740927af07f21dd2f1ca",
-  measurementId: "G-NXH1V2KPRG"
+  measurementId: "G-NXH1V2KPRG",
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore();
 
-document.addEventListener('DOMContentLoaded', function(){
-    initApp();
+document.addEventListener("DOMContentLoaded", function () {
+  initApp();
 
-    //event listners
-    document.getElementById('noteForm').addEventListener('submit', addNote);
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', filterNotes);
-    })
+  //event listners
+  document.getElementById("noteForm").addEventListener("submit", addNote);
+  document.querySelectorAll(".filter-btn").forEach((btn) => {
+    btn.addEventListener("click", filterNotes);
+  });
 
-    loadNotes();
+  loadNotes();
 });
 
-function initApp(){
-    
+function initApp() {}
+
+async function addNote(e) {
+  e.preventDefault();
+
+  const title = document.getElementById("noteTitle").value;
+  const content = document.getElementById("noteContent").value;
+  const category = document.getElementById("noteCategory").value;
+  const color = document.getElementById("noteColor").value;
+
+  //create new note object
+  const newNote = {
+    _id: Date.now().toString(),
+    title: title,
+    content: content,
+    category: category,
+    color: color,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  //Add a new document to the notes collection
+  try {
+    const docRef = await addDoc(collection(db, "notes"), newNote);
+    document.getElementById("noteForm").reset();
+    loadNotes();
+    alert("Note saved successfully");
+  } catch (error) {
+    alert("Error saving note, Please try again");
+    console.error("Error adding note: ".error);
+  }
 }
 
-async function addNote(e){
-    e.preventDefault();
+async function loadNotes(filter = "all") {
+  const notesList = document.getElementById("notesList");
+  notesList.innerHTML = "";
 
-    const title = document.getElementById('noteTitle').value;
-    const content = document.getElementById('noteContent').value;
-    const category = document.getElementById('noteCategory').value;
-    const color = document.getElementById('noteColor').value;
+  try {
+    const querySnapshot = await getDocs(collection(db, "notes"));
+    const notes = [];
 
-    //create new note object
-    const newNote = {
-        _id: Date.now().toString(),
-        title: title,
-        content: content,
-        category: category,
-        color: color,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-    }
-
-    //Add a new document to the notes collection
-    try{
-        const docRef = await addDoc(collection(db, "notes"), newNote);
-        document.getElementById('noteForm').reset();
-        loadNotes();
-        alert('Note saved successfully');
-    }catch (error){
-        alert('Error saving note, Please try again');
-        console.error("Error adding note: ". error);
-    }
-}
- 
-
-function loadNotes(filter = 'all'){
-    const notes = JSON.parse(localStorage.getItem('notes'));
-    const notesList = document.getElementById('notesList');
-    notesList.innerHTML = '';
-
-    //chech if there are no notes
-    if(notes.length === 0){
-        notesList.innerHTML = `
+    querySnapshot.forEach((doc) => {
+      notes.push({
+        _id: doc.id,
+        ...doc.data(),
+      });
+    });
+    //check if there are no notes
+    if (notes.length === 0) {
+      notesList.innerHTML = `
             <div class="empty-state">
                 <i class="fas fa-sticky-note"></i>
                 <h3>No Notes Available</h3>
                 <p>Create Your first note to get started!</p>
             </div>
         `;
-        return;
+      return;
     }
 
     let filteredNotes = notes;
-    if(filter !== 'all'){
-        filteredNotes = notes.filter(note => note.category === filter);
+    if (filter !== "all") {
+      filteredNotes = notes.filter((note) => note.category === filter);
     }
 
-    filteredNotes.forEach(note => {
-        const noteElement = document.createElement('div');
-        noteElement.className = 'note-item';
-        noteElement.style.borderLeftColor = note.color;
+    filteredNotes.forEach((note) => {
+      const noteElement = document.createElement("div");
+      noteElement.className = "note-item";
+      noteElement.style.borderLeftColor = note.color;
 
-        const noteDate = new Date(note.createdAt).toLocaleString();
+      const noteDate = new Date(note.createdAt).toLocaleString();
 
-        noteElement.innerHTML = `
+      noteElement.innerHTML = `
             <div class="note-header">
                 <div class="note-title">${note.title}</div>
                 <div class="note-category">${note.category}</div>
@@ -106,44 +120,54 @@ function loadNotes(filter = 'all'){
             </div>
         `;
 
-        notesList.appendChild(noteElement);
-    })
-}
-
-function editNote(noteId){
-    const notes = JSON.parse(localStorage.getItem('notes'));
-
-    const noteToEdit = notes.find(note => note._id === noteId);
-
-    if(noteToEdit){
-        document.getElementById('noteTitle').value = noteToEdit.title;
-        document.getElementById('noteContent').value = noteToEdit.content;
-        document.getElementById('noteCategory').value = noteToEdit.category;
-        document.getElementById('noteColor').value = noteToEdit.color;
-        
-        //remove the note from the array, then save updated version
-        const updatedNotes = notes.filter(note => note._id !== noteId);
-        localStorage.setItem('notes', JSON.stringify(updatedNotes));
-    }
-}
-
-function deleteNote(noteId){
-    if(confirm('Are you sure you want to delete this note?')){
-        const notes = JSON.parse(localStorage.getItem('notes'));
-
-        const updatedNotes = notes.filter(note => note._id !== noteId);
-        localStorage.setItem('notes', JSON.stringify(updatedNotes));
-        loadNotes();
-    }
-}
-
-function filterNotes(){
-    //update active button
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.remove('active');
+      notesList.appendChild(noteElement);
     });
-    this.classList.add('active');
+  } catch (error) {
+    console.error("Error loading notes: ", error);
+    notesList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Error Loading Notes</h3>
+                <p>Please check your connection and try again.</p>
+            </div>
+        `;
+  }
+}
 
-    const filter = this.getAttribute('data-filter');
-    loadNotes(filter);
+function editNote(noteId) {
+  const notes = JSON.parse(localStorage.getItem("notes"));
+
+  const noteToEdit = notes.find((note) => note._id === noteId);
+
+  if (noteToEdit) {
+    document.getElementById("noteTitle").value = noteToEdit.title;
+    document.getElementById("noteContent").value = noteToEdit.content;
+    document.getElementById("noteCategory").value = noteToEdit.category;
+    document.getElementById("noteColor").value = noteToEdit.color;
+
+    //remove the note from the array, then save updated version
+    const updatedNotes = notes.filter((note) => note._id !== noteId);
+    localStorage.setItem("notes", JSON.stringify(updatedNotes));
+  }
+}
+
+function deleteNote(noteId) {
+  if (confirm("Are you sure you want to delete this note?")) {
+    const notes = JSON.parse(localStorage.getItem("notes"));
+
+    const updatedNotes = notes.filter((note) => note._id !== noteId);
+    localStorage.setItem("notes", JSON.stringify(updatedNotes));
+    loadNotes();
+  }
+}
+
+function filterNotes() {
+  //update active button
+  document.querySelectorAll(".filter-btn").forEach((btn) => {
+    btn.classList.remove("active");
+  });
+  this.classList.add("active");
+
+  const filter = this.getAttribute("data-filter");
+  loadNotes(filter);
 }
