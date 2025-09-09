@@ -1,12 +1,36 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCNSyFbJf5cFzVAfvLRCgoqqxzDmxv0eXs",
+  authDomain: "notesapp-5fc7a.firebaseapp.com",
+  projectId: "notesapp-5fc7a",
+  storageBucket: "notesapp-5fc7a.firebasestorage.app",
+  messagingSenderId: "116587544575",
+  appId: "1:116587544575:web:97740927af07f21dd2f1ca",
+  measurementId: "G-NXH1V2KPRG"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore();
+
+document.addEventListener('DOMContentLoaded', function(){
+    initApp();
+
+    //event listners
+    document.getElementById('noteForm').addEventListener('submit', addNote);
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', filterNotes);
+    })
+
+    loadNotes();
+});
 
 function initApp(){
-    //check if notes exist in localstorage, if not initialize empty array
-    if(!localStorage.getItem('notes')){
-        localStorage.setItem('notes', JSON.stringify([])); //converting object to json
-    }
+    
 }
 
-function addNote(e){
+async function addNote(e){
     e.preventDefault();
 
     const title = document.getElementById('noteTitle').value;
@@ -25,41 +49,18 @@ function addNote(e){
         updatedAt: new Date().toISOString()
     }
 
-    //get existing notes from localstorage
-    let notes = [];
+    //Add a new document to the notes collection
     try{
-        const noteData = localStorage.getItem('notes');
-        if(noteData){
-            notes = JSON.parse(noteData);
-        }
+        const docRef = await addDoc(collection(db, "notes"), newNote);
+        document.getElementById('noteForm').reset();
+        loadNotes();
+        alert('Note saved successfully');
     }catch (error){
-        notes = [];
-        localStorage.setItem('notes',JSON.stringify([]));
+        alert('Error saving note, Please try again');
+        console.error("Error adding note: ". error);
     }
-
-    //add the new note to the array
-    notes.push(newNote);
-
-    //save back to localstorage
-    localStorage.setItem('notes', JSON.stringify(notes));
-
-    document.getElementById('noteForm').reset();
-
-    loadNotes();
-    alert('Note saved successfully');
 }
-
-document.addEventListener('DOMContentLoaded', function(){
-    initApp();
-
-    //event listners
-    document.getElementById('noteForm').addEventListener('submit', addNote);
-    this.documentElement.getElementsByClassName('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', filterNotes);
-    })
-
-    loadNotes();
-});
+ 
 
 function loadNotes(filter = 'all'){
     const notes = JSON.parse(localStorage.getItem('notes'));
@@ -139,7 +140,7 @@ function deleteNote(noteId){
 function filterNotes(){
     //update active button
     document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.classList.add('active');
+        btn.classList.remove('active');
     });
     this.classList.add('active');
 

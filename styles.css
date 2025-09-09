@@ -232,3 +232,29 @@ header h1{
     margin-bottom: 15px;
     color: var(--primary-light);
 }
+
+.notes-manager h2{
+    color: var(--primary);
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    text-align: center;
+    position: relative;
+}
+
+.notes-manager p{
+    text-align: center;
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+input[type="color"]{
+    appearance: none;
+    height: 50px;
+    background-color: transparent;
+    border: 2px solid #ddd;
+    padding: 3px;
+    border-radius: var(--radius);
+    transition: var(--transition);
+}
