@@ -7,6 +7,7 @@ import {
   doc,
   deleteDoc,
   updateDoc,
+  getDoc,
 } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -46,7 +47,6 @@ async function addNote(e) {
 
   //create new note object
   const newNote = {
-    _id: Date.now().toString(),
     title: title,
     content: content,
     category: category,
@@ -114,14 +114,26 @@ async function loadNotes(filter = "all") {
             <div class="note-footer">
                 <div class="note-date">${noteDate}</div>
                 <div class="note-actions">
-                    <button onclick="editNote('${note._id}')"><i class="fas fa-edit"></i></button>
-                    <button onclick="deleteNote('${note._id}')"><i class="fas fa-trash"></i></button>
+                    <button class="edit-btn" data-id="${note._id}"><i class="fas fa-edit"></i></button>
+                    <button class="delete-btn" data-id="${note._id}"><i class="fas fa-trash"></i></button>
                 </div>
             </div>
         `;
 
       notesList.appendChild(noteElement);
     });
+
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+      btn.addEventListener('click', function(){
+        editNote(this.getAttribute('data-id'));
+      });
+    });
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', function(){
+        editNote(this.getAttribute('data-id'));
+      });
+    });
+
   } catch (error) {
     console.error("Error loading notes: ", error);
     notesList.innerHTML = `
@@ -134,31 +146,47 @@ async function loadNotes(filter = "all") {
   }
 }
 
-function editNote(noteId) {
-  const notes = JSON.parse(localStorage.getItem("notes"));
+async function editNote(noteId) {
+  try {
+    const querySnapshot = await getDocs(collection(db, "notes"));
+    let noteToEdit = null;
 
-  const noteToEdit = notes.find((note) => note._id === noteId);
+    querySnapshot.forEach((doc) => {
+        if (doc.id === noteId) {
+            noteToEdit = {
+                _id: doc.id,
+                ...doc.data()
+            };
+        }
+    });
 
-  if (noteToEdit) {
+    if (noteToEdit) {
     document.getElementById("noteTitle").value = noteToEdit.title;
     document.getElementById("noteContent").value = noteToEdit.content;
     document.getElementById("noteCategory").value = noteToEdit.category;
     document.getElementById("noteColor").value = noteToEdit.color;
 
-    //remove the note from the array, then save updated version
-    const updatedNotes = notes.filter((note) => note._id !== noteId);
-    localStorage.setItem("notes", JSON.stringify(updatedNotes));
+    await deleteNote(noteId);
   }
+
+  } catch (error) {
+    console.error("Error loading note to editing: ", error);
+    alert('Error loading note to editing');
+  }
+
 }
 
-function deleteNote(noteId) {
-  if (confirm("Are you sure you want to delete this note?")) {
-    const notes = JSON.parse(localStorage.getItem("notes"));
-
-    const updatedNotes = notes.filter((note) => note._id !== noteId);
-    localStorage.setItem("notes", JSON.stringify(updatedNotes));
-    loadNotes();
+async function deleteNote(noteId) {
+  if (confirm('Are you sure want to delete this note?')){
+    try {
+        await deleteDoc(doc(db, "notes", noteId));
+        loadNotes();
+    } catch (error) {
+        console.error("Error deleting note: ", error);
+        alert('Error deleting note.please try again');
+    }
   }
+  
 }
 
 function filterNotes() {
@@ -171,3 +199,6 @@ function filterNotes() {
   const filter = this.getAttribute("data-filter");
   loadNotes(filter);
 }
+
+window.editNote = editNote;
+window.deleteNote = deleteNote;
